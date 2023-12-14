@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 250px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .patient-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .patient-item {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .patient-item h3 {
+            margin-top: 0;
+            font-size: 1em;
+        }
+
+        .patient-item p {
+            margin: 0;
+        }
+
+        .gender-pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .gender-male {
+            background-color: #007bff;
+        }
+
+        .gender-female {
+            background-color: #ff69b4;
+        }
+
+        .info-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gender-info {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+    <title>Liste des Patients</title>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Liste des Patients</h2>
+
+        <ul class="patient-list" id="patientList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fait un GET à l'URL de l'API pour récupérer les données
+            fetch('http://3.208.22.199/api/patient')
+                .then(response => response.json())
+                .then(data => displayPatients(data))
+                .catch(error => console.error('Error:', error));
+        });
+
+        function displayPatients(data) {
+            const patientListElement = document.getElementById('patientList');
+
+            data.forEach(patient => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('patient-item');
+
+                const patientName = `${patient.name[0].given[0]} ${patient.name[0].family}`;
+                const patientGender = patient.gender;
+                const patientBirthDate = patient.birthDate;
+
+                const genderClass = patientGender === 'male' ? 'gender-male' : 'gender-female';
+
+                listItem.innerHTML = `
+                    <h3>${patientName}</h3>
+                    <div class="info-container">
+                        <div class="gender-info">
+                            <span class="gender-pill ${genderClass}">${patientGender}</span>
+                        </div>
+                        <p>${patientBirthDate}</p>
+                    </div>
+                `;
+
+                patientListElement.appendChild(listItem);
+            });
+        }
+    </script>
+
+</body>
+</html>
